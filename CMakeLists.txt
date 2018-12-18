@@ -4,7 +4,7 @@ project(AsyncTask)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_subdirectory(core)
+add_subdirectory(lib)
 add_subdirectory(test)
 add_subdirectory(example)
 

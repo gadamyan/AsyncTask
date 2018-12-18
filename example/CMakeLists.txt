@@ -1,8 +1,5 @@
-cmake_minimum_required(VERSION 3.12.2)
 
-set(CMAKE_CXX_STANDARD 14)
-
-file(GLOB_RECURSE SOURCES *.cpp *.hpp)
+file(GLOB_RECURSE SOURCES src/*.cpp src/*.hpp)
 
 add_executable(example_app ${SOURCES})
 
