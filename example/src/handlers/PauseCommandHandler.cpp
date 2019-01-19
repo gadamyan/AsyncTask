@@ -16,7 +16,7 @@ CommandResult PauseCommandHandler::handle(const std::vector<std::string>& words)
 
 CommandResult PauseCommandHandler::handle_single_arg(const std::string& arg) const
 {
-    auto handle = m_service->get_task_with_id(arg);
+    auto handle = m_service.lock()->get_task_with_id(arg);
     if (handle)
     {
         handle->pause();

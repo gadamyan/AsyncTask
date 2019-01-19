@@ -10,10 +10,10 @@
 class AbstractCommandHandler
 {
 public:
-    AbstractCommandHandler(std::shared_ptr<async_task::AsyncTaskService> service);
+    AbstractCommandHandler(std::weak_ptr<async_task::AsyncTaskService> service);
     virtual CommandResult handle(const std::vector<std::string>& words) = 0;
     virtual ~AbstractCommandHandler() = default;
 
 protected:
-    const std::shared_ptr<async_task::AsyncTaskService> m_service;
+    const std::weak_ptr<async_task::AsyncTaskService> m_service;
 };

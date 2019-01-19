@@ -1,7 +1,7 @@
 
 #include "StartCommandHandler.hpp"
-#include "../FileWriterTask.hpp"
-#include "../TimerTask.hpp"
+#include "tasks/FileWriterTask.hpp"
+#include "tasks/TimerTask.hpp"
 
 CommandResult StartCommandHandler::handle(const std::vector<std::string>& words)
 {
@@ -20,13 +20,13 @@ CommandResult StartCommandHandler::create_file_writer_task()
 {
     const auto file_name = "file" + std::to_string(m_text_file_counter) + ".txt";
     ++m_text_file_counter;
-    const auto handle = m_service->schedule_task<FileWriterTask>(file_name);
+    const auto handle = m_service.lock()->schedule_task<FileWriterTask>(file_name);
     return CommandResult { "Started task with id " + handle->get_id(), false };
 }
 
 CommandResult StartCommandHandler::create_timer_task() const
 {
-    const auto handle = m_service->schedule_task<TimerTask>(30);
+    const auto handle = m_service.lock()->schedule_task<TimerTask>(30);
     return CommandResult { "Started task with id " + handle->get_id(), false };
 }
 

@@ -3,6 +3,7 @@
 #include "CommandProcessor.hpp"
 #include "Utils.hpp"
 #include <iostream>
+#include <cassert>
 
 ArgumentProcessor::ArgumentProcessor(int argc, char** argv)
 {
@@ -22,7 +23,8 @@ ArgumentProcessor::ArgumentProcessor(int argc, char** argv)
 
 void ArgumentProcessor::start_loop() const
 {
-    CommandProcessor processor;
+    auto service = std::make_shared<async_task::AsyncTaskService>();
+    CommandProcessor processor(service);
     for (std::string input_line; std::getline(std::cin, input_line);)
     {
         const auto result = processor.process_command(input_line);

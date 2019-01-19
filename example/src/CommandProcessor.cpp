@@ -1,7 +1,6 @@
 
 #include "CommandProcessor.hpp"
 
-#include "AsyncTaskService.hpp"
 #include "handlers/StartCommandHandler.hpp"
 #include "handlers/PauseCommandHandler.hpp"
 #include "handlers/ResumeCommandHandler.hpp"
@@ -21,34 +20,31 @@ namespace {
 std::vector<std::string> split_string(const std::string& input_line)
 {
     std::istringstream istring_strem(input_line);
-    return { std::istream_iterator<std::string>(istring_strem),
-        std::istream_iterator<std::string>() };
+    using IteratorType = std::istream_iterator<std::string>;
+    return { IteratorType(istring_strem), IteratorType() };
+}
 }
 
-std::map<std::string, std::unique_ptr<AbstractCommandHandler>>
-    construct_command_map(std::shared_ptr<AsyncTaskService> service)
+CommandProcessor::CommandProcessor(std::weak_ptr<async_task::AsyncTaskService> service)
+: m_service(std::move(service))
 {
-    std::map<std::string, std::unique_ptr<AbstractCommandHandler>> all_commands;
-    all_commands.emplace("start", std::make_unique<StartCommandHandler>(service));
-    all_commands.emplace("pause", std::make_unique<PauseCommandHandler>(service));
-    all_commands.emplace("resume", std::make_unique<ResumeCommandHandler>(service));
-    all_commands.emplace("stop", std::make_unique<StopCommandHandler>(service));
-    all_commands.emplace("status", std::make_unique<StatusCommandHandler>(service));
-    all_commands.emplace("quit", std::make_unique<QuitCommandHandler>(service));
-    return all_commands;
-}
+    m_all_commands.emplace("start", std::make_unique<StartCommandHandler>(m_service));
+    m_all_commands.emplace("pause", std::make_unique<PauseCommandHandler>(m_service));
+    m_all_commands.emplace("resume", std::make_unique<ResumeCommandHandler>(m_service));
+    m_all_commands.emplace("stop", std::make_unique<StopCommandHandler>(m_service));
+    m_all_commands.emplace("status", std::make_unique<StatusCommandHandler>(m_service));
+    m_all_commands.emplace("quit", std::make_unique<QuitCommandHandler>(m_service));
 }
 
 CommandResult CommandProcessor::process_command(const std::string& input_line)
 {
-    auto service = std::make_shared<AsyncTaskService>();
-    static auto all_commands = construct_command_map(service);
     const std::vector<std::string> words = split_string(input_line);
-    auto it = all_commands.find(words.front());
-    if (it != all_commands.cend())
+    const std::string command = words.front();
+    auto it = m_all_commands.find(command);
+    if (it != m_all_commands.cend())
     {
         return it->second->handle(words);
     }
-    return CommandResult { "Unknown command: " + words.front(), false };
+    return CommandResult { "Unknown command: " + command, false };
 
 }

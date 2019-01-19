@@ -54,3 +54,11 @@ TEST_F(AsyncTaskServiceFixture, validate_remove_all_tasks)
         ASSERT_EQ(service.get_task_with_id(item->get_id()), nullptr);
     }
 }
+
+TEST_F(AsyncTaskServiceFixture, move_service)
+{
+    const auto handle = service.schedule_task(std::make_unique<MockTask>());
+    auto moved_service = std::move(service);
+    ASSERT_TRUE(service.get_all_task_handles().empty());
+    ASSERT_TRUE(moved_service.get_task_with_id(handle->get_id()));
+}

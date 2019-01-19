@@ -1,6 +1,7 @@
 
 #include "AsyncTaskService.hpp"
 #include "AsyncTaskHandle.hpp"
+#include <algorithm>
 
 using namespace async_task;
 

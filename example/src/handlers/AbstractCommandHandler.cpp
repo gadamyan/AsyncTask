@@ -3,7 +3,7 @@
 
 using namespace async_task;
 
-AbstractCommandHandler::AbstractCommandHandler(std::shared_ptr<AsyncTaskService> service)
+AbstractCommandHandler::AbstractCommandHandler(std::weak_ptr<AsyncTaskService> service)
 : m_service(service)
 {
 }

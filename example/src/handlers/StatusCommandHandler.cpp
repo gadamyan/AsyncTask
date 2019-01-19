@@ -1,5 +1,6 @@
 
 #include "StatusCommandHandler.hpp"
+#include <cassert>
 
 using namespace async_task;
 
@@ -50,7 +51,7 @@ CommandResult StatusCommandHandler::handle(const std::vector<std::string>& words
 
 CommandResult StatusCommandHandler::handle_not_args() const
 {
-    const auto all_handles = m_service->get_all_task_handles();
+    const auto all_handles = m_service.lock()->get_all_task_handles();
     std::string result_test;
     for (const auto& handle : all_handles)
     {
@@ -62,7 +63,7 @@ CommandResult StatusCommandHandler::handle_not_args() const
 
 CommandResult StatusCommandHandler::handle_single_arg(const std::string& arg) const
 {
-    const auto handle = m_service->get_task_with_id(arg);
+    const auto handle = m_service.lock()->get_task_with_id(arg);
     if (handle)
     {
         return CommandResult { get_status_comman_message(handle), false };

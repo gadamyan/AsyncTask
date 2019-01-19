@@ -9,15 +9,15 @@ namespace {
 
 std::string generate_text()
 {
-    static constexpr char count = 'z' - 'a';
+    static constexpr int count = static_cast<int>('z' - 'a');
     static std::random_device device;
     static std::default_random_engine generator(device());
-    static std::uniform_int_distribution<char> distribution(0, count);
+    static std::uniform_int_distribution<int> distribution(0, count);
 
     std::string text;
     for (int i = 0; i < 120; ++i)
     {
-        const char random_char = 'a' + distribution(generator);
+        const char random_char = 'a' + static_cast<char>(distribution(generator));
         text += random_char;
     }
     return text;

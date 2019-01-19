@@ -3,6 +3,36 @@ A C++ library that allows the user to manage an arbitrary number of asynchronous
 The library allows users to schedule tasks to be run asynchronously and pause, resume and stop them.
 The library also allows the user to query the status of a given task.
 
+## API uasge:
+
+A task has to extend the async_task::Task abstract class and override the *run* method.
+In the loop of the implementation function there should be a call of the *should_continue* function,
+It is needed to cancel the loop and be able to pause or cancel the task.
+
+    class SampleTask : public async_task::Task
+    {
+    public:
+        SampleTask(...);
+        void run() override
+        {
+            while (should_continue() && ...)
+            {
+                ...
+            }
+        }
+    };
+
+AsyncTaskService class gives an ability to create and manage arbitrary number of asynchronous tasks.
+*schedule_task* function creates and schedules a task and returns a handle to it.
+Having the task handle, it is possible to pause, resume, cancel and check the state of the task.
+
+    async_task::AsyncTaskService service;
+    auto handle = service.schedule_task<SampleTask>(...);
+    handle->get_state();
+    handle->pause();
+    handle->resume();
+    handle->cancel();
+
 ## Example application usage:
 The example application uses the AsyncTask library to schedule and manage tasks.
 Currently only tow types of tasks are supported.
@@ -29,8 +59,11 @@ These instructions have the following format:
 - status <task_id> As above, but for a single task.
 - quits gracefully shut down.
 
+## Dependencies:
+- C++14 compiler
+- Cmake version 3.12.2 or higher
+
 ## Generate build files:
-IMPORTANT: Cmake version 3.12.2 or higher is needed to generate the project.
 To generate makefiles from the command line.
 From the project root:
 
@@ -47,7 +80,7 @@ To run all tests easily.
 
     make test
 
-### Run executables:
+## Rsun executables:
 After the project is generated and compiled you will be able to run the executables.
 To run the example application from the command line.
 From the build directory:
@@ -62,9 +95,24 @@ To run the test application and see the test results.
 To generate Xcode project from the command line.
 From the project root:
 
-    ./build_xcode.cmake
+    mkdir build_xcode
+    cd build_xcode
+    cmake -G "Xcode" ..
 
 Xcode project should be created in build_xcode folder.
 Now, to open the project in Xcode editor.
 
-    open build_xcode/AsyncTask.xcodeproj
+    open AsyncTask.xcodeproj
+
+### Generate Visual Studio project:
+To generate Visual Studio project from the command line.
+From the project root:
+
+    mkdir build_vs
+    cd build_vs
+    cmake -G "Visual Studio 15 2017" ..
+
+Visual Studio project should be created in build_vs folder.
+Now, to open the project in Visual Studio editor.
+
+    open AsyncTask.sln
